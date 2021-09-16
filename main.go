@@ -20,19 +20,24 @@ type DataRow struct {
 	Notes         string
 }
 
-func readCSV() [][]string {
+var headerRow []string
+
+func readCSV() ([][]string, error) {
 	records, err := csv.NewReader(os.Stdin).ReadAll()
 	if err != nil {
-		fmt.Println("error")
+		return nil, fmt.Errorf("unable to read csv")
 	}
-	return records
+	return records, nil
 }
 
 func writeCSV(rows []DataRow) {
 	csvWriter := csv.NewWriter(os.Stdout)
 
-	data := make([][]string, len(rows))
-	for _, r := range rows {
+	var data [][]string
+	for i, r := range rows {
+		if i == 0 {
+			data = append(data, headerRow)
+		}
 		row := []string{r.Timestamp, r.Address, r.Zip, r.FullName, fmt.Sprintf("%f", r.FooDuration), fmt.Sprintf("%f", r.BarDuration), fmt.Sprintf("%f", r.TotalDuration), r.Notes}
 		data = append(data, row)
 	}
@@ -43,12 +48,17 @@ func writeCSV(rows []DataRow) {
 }
 
 func main() {
-	records := readCSV()
+	records, err := readCSV()
+	if err != nil {
+		log.Fatal("unable to read csv file")
+		return
+	}
 
-	rows := make([]DataRow, len(records))
+	var rows []DataRow
 	for i, record := range records {
 		// don't normalize header
 		if i == 0 {
+			headerRow = record
 			continue
 		}
 
