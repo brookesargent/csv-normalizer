@@ -4,8 +4,11 @@ lint:
 test:
 	go test -tags=unit -v --cover ./normalizations
 
-build:
-	go build -o bin/normalizer main.go
+build-linux:
+	GOOS=linux GOARCH=amd64 go build -o bin/normalizer main.go
+
+build-mac:
+	GOOS=darwin GOARCH=amd64 go build -o bin/normalizer main.go
 
 run:
 	./bin/normalizer < sampleData/sample.csv > output.csv
