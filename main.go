@@ -29,14 +29,14 @@ func readCSV() [][]string {
 }
 
 func writeCSV(rows []DataRow) {
-	csvwriter := csv.NewWriter(os.Stdout)
+	csvWriter := csv.NewWriter(os.Stdout)
 
-	var data [][]string
+	data := make([][]string, len(rows))
 	for _, r := range rows {
 		row := []string{r.Timestamp, r.Address, r.Zip, r.FullName, fmt.Sprintf("%f", r.FooDuration), fmt.Sprintf("%f", r.BarDuration), fmt.Sprintf("%f", r.TotalDuration), r.Notes}
 		data = append(data, row)
 	}
-	err := csvwriter.WriteAll(data)
+	err := csvWriter.WriteAll(data)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,15 +45,21 @@ func writeCSV(rows []DataRow) {
 func main() {
 	records := readCSV()
 
-	var rows []DataRow
+	rows := make([]DataRow, len(records))
 	for i, record := range records {
 		// don't normalize header
 		if i == 0 {
 			continue
 		}
 
+		formattedTimestamp, err := normalizations.FormatTimestamp(record[0])
+		if err != nil {
+			log.Println(fmt.Sprintf("Warning: row %d has an invalid timestamp that could not be parsed. It will be dropped from the output", i+1))
+			continue
+		}
+
 		data := DataRow{
-			Timestamp:   normalizations.FormatTimestamp(record[0]),
+			Timestamp:   formattedTimestamp,
 			Address:     record[1],
 			Zip:         normalizations.FormatZipCode(record[2]),
 			FullName:    record[3],
