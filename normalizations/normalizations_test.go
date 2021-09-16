@@ -45,7 +45,6 @@ func TestFormatTimestampSuccess(t *testing.T) {
 func TestFormatTimestampError(t *testing.T) {
 	ts := "3/12/16 11:01 PM"
 	result, err := FormatTimestamp(ts)
-	fmt.Println(err)
 	assert.NotNil(t, err)
 	assert.Equal(t, fmt.Sprintf("could not parse timestamp: %s", ts), err.Error())
 	assert.Equal(t, "", result)
