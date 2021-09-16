@@ -1,0 +1,6 @@
+# Goland files
+.idea/
+*.iml
+!.idea/watcherTasks.xml
+
+
