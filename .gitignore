@@ -1,6 +1,10 @@
+# binaries
+bin
+
 # Goland files
 .idea/
 *.iml
 !.idea/watcherTasks.xml
 
+coverage.txt
 
