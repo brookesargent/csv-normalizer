@@ -5,6 +5,3 @@ bin
 .idea/
 *.iml
 !.idea/watcherTasks.xml
-
-coverage.txt
-
