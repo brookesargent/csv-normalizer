@@ -7,28 +7,32 @@ import (
 )
 
 const layout = "1/2/06 3:04:05 PM"
+const EasternTime = "America/New_York"
+const PacificTime = "America/Los_Angeles"
 
-func FormatTimestamp(timestamp string) string {
+// FormatTimestamp takes a timestamp (Pacific time assumed) and converts it to Eastern time and formats it in RFC3339
+func FormatTimestamp(timestamp string) (string, error) {
 	// load locations for timezone conversion
-	ptLoc, err := time.LoadLocation("America/Los_Angeles")
+	ptLoc, err := time.LoadLocation(PacificTime)
 	if err != nil {
-		fmt.Println("Could not parse location")
+		return "", fmt.Errorf("could not load location: %s", PacificTime)
 	}
-	etLoc, err := time.LoadLocation("America/New_York")
+	etLoc, err := time.LoadLocation(EasternTime)
 	if err != nil {
-		fmt.Println("Could not parse location")
+		return "", fmt.Errorf("could not load location: %s", EasternTime)
 	}
 
 	// convert to Go time
 	t, err := time.ParseInLocation(layout, timestamp, ptLoc)
 	if err != nil {
-		fmt.Println(err)
+		return "", fmt.Errorf("could not parse timestamp: %s", timestamp)
 	}
 
 	// return timestamp string converted to ET and RFC3339 formatted
-	return t.In(etLoc).Format(time.RFC3339)
+	return t.In(etLoc).Format(time.RFC3339), nil
 }
 
+// FormatZipCode pads a zip code of less than 5 characters with leading zeroes
 func FormatZipCode(zip string) string {
 	for len(zip) < 5 {
 		zip = fmt.Sprintf("%s%s", "0", zip)
@@ -36,10 +40,12 @@ func FormatZipCode(zip string) string {
 	return zip
 }
 
+// FormatFullName returns the input string in uppercase
 func FormatFullName(name string) string {
 	return strings.ToUpper(name)
 }
 
+// DurationToSeconds takes a duration in HH:MM:SS.MS format and returns the total seconds of the duration
 func DurationToSeconds(duration string) float64 {
 	splitDuration := strings.Split(duration, ":")
 	for i, v := range splitDuration {

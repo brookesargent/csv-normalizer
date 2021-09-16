@@ -3,6 +3,7 @@
 package normalizations
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -34,8 +35,18 @@ func TestDurationToSeconds(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-func TestFormatTimestamp(t *testing.T) {
+func TestFormatTimestampSuccess(t *testing.T) {
 	expected := "2016-03-13T03:01:00-04:00"
-	actual := FormatTimestamp("3/12/16 11:01:00 PM")
+	actual, err := FormatTimestamp("3/12/16 11:01:00 PM")
 	assert.Equal(t, expected, actual)
+	assert.Nil(t, err)
+}
+
+func TestFormatTimestampError(t *testing.T) {
+	ts := "3/12/16 11:01 PM"
+	result, err := FormatTimestamp(ts)
+	fmt.Println(err)
+	assert.NotNil(t, err)
+	assert.Equal(t, fmt.Sprintf("could not parse timestamp: %s", ts), err.Error())
+	assert.Equal(t, "", result)
 }
