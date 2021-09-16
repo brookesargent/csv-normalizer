@@ -18,7 +18,7 @@ type DataRow struct {
 	Notes         string
 }
 
-func readCSV(filename string) [][]string {
+func readCSV() [][]string {
 	records, err := csv.NewReader(os.Stdin).ReadAll()
 	if err != nil {
 		fmt.Println("error")
@@ -42,7 +42,7 @@ func writeCSV(rows []DataRow) {
 }
 
 func main() {
-	records := readCSV("test")
+	records := readCSV()
 
 	var rows []DataRow
 	for _, record := range records {
