@@ -31,3 +31,9 @@ func TestDurationToSeconds(t *testing.T) {
 	actual := DurationToSeconds("1:23:32.123")
 	assert.Equal(t, expected, actual)
 }
+
+func TestFormatTimestamp(t *testing.T) {
+	expected := "2016-03-13T03:01:00-04:00"
+	actual := FormatTimestamp("3/12/16 11:01:00 PM")
+	assert.Equal(t, expected, actual)
+}

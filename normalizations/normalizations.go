@@ -6,6 +6,29 @@ import (
 	"time"
 )
 
+const layout = "1/2/06 3:04:05 PM"
+
+func FormatTimestamp(timestamp string) string {
+	// load locations for timezone conversion
+	ptLoc, err := time.LoadLocation("America/Los_Angeles")
+	if err != nil {
+		fmt.Println("Could not parse location")
+	}
+	etLoc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		fmt.Println("Could not parse location")
+	}
+
+	// convert to Go time
+	t, err := time.ParseInLocation(layout, timestamp, ptLoc)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// return timestamp string converted to ET and RFC3339 formatted
+	return t.In(etLoc).Format(time.RFC3339)
+}
+
 func FormatZipCode(zip string) string {
 	for len(zip) < 5 {
 		zip = fmt.Sprintf("%s%s", "0", zip)
